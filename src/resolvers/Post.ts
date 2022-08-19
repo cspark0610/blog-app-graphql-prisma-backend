@@ -1,4 +1,5 @@
 import { Context } from "../index";
+import { userLoader } from "../loaders/userLoader";
 
 interface PostParentType {
 	// quiero extraer del model Post authorId
@@ -35,8 +36,11 @@ export const Post = {
       updatedAt: 2022-08-19T14:35:24.389Z
     } 
      */
-		return prisma.user.findUnique({
-			where: { id: Number(parent.authorId) },
-		});
+		// return prisma.user.findUnique({
+		// 	where: { id: Number(parent.authorId) },
+		// });
+
+		/*DATA LOADER: BATCH AND CACHE QUERY IN ORDER NOT TO REPEAT user.findUnique */
+		return userLoader.load(parent.authorId);
 	},
 };
