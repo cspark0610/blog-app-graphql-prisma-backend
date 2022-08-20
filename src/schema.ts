@@ -53,7 +53,7 @@ export const typeDefs = gql`
 
 	type User {
 		id: ID!
-		name: String
+		name: String!
 		email: String!
 		posts: [Post!]!
 		# bad design approach
@@ -64,6 +64,7 @@ export const typeDefs = gql`
 	type Profile {
 		id: ID!
 		bio: String!
+		isMyProfile: Boolean!
 		user: User!
 	}
 `;

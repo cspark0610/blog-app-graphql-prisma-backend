@@ -8,10 +8,8 @@ export const Query = {
 		});
 	},
 
-	me: async (_: any, __: any, { prisma, userInfo }: Context): Promise<User | null> => {
-		if (!userInfo) {
-			return null;
-		}
+	me: async (_: any, __: any, { prisma, userInfo }: Context) => {
+		if (!userInfo) return null;
 
 		return prisma.user.findUnique({
 			where: {
@@ -21,12 +19,20 @@ export const Query = {
 	},
 
 	// mutacion publica no es necesario pasar un token dentro del headers, cualq user no authenthicado puede ver el profile de cualq user
-	profile: async (_: any, { userId }: { userId: string }, { prisma }: Context): Promise<any> => {
+	profile: async (_: any, { userId }: { userId: string }, { prisma, userInfo }: Context) => {
+		const isMyProfile = Number(userId) === userInfo!.userId;
+
 		// we set userId in Profile model as @unique directive so we can use prisma FindUnique method
-		return prisma.profile.findUnique({
+		const profile = await prisma.profile.findUnique({
 			where: { userId: Number(userId) },
 			// "include" permitira anidar la query y poedir los datos del user
 			// include: { user: true },
 		});
+		if (!profile) return null;
+
+		return {
+			...profile,
+			isMyProfile,
+		};
 	},
 };
